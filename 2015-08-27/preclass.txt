@@ -8,13 +8,25 @@
     you should use a script to produce this plot, with both the serial
     fraction and the maximum number of cores as parameters.
 
+    See speedup.png for the plot and speedup.py for the script used.
+    The maximum possible speedup with 128 cores is is 9.343.
+
 2.  Suppose a particular program can be partitioned into perfectly
     independent tasks, each of which takes time tau.  Tasks are
     set up, scheduled, and communicated to p workers at a (serial)
     central server; this takes an overhead time alpha per task.
     What is the theoretically achievable throughput (tasks/time)?
 
+    p / (tau + alpha)
+
 3.  Under what circumstances is it best to not tune?
+
+    1)  When the human time spent to tune is more expensive than the machine
+        time saved
+    2)  When the tuning would violate good software design principles (e.g.
+        obfuscate code, clutter the code base, etc.)
+    3)  When the tuning would only speed up the program marginally while
+        bottlenecks exist elsewhere in the code
 
 4.  The class cluster consists of eight nodes and fifteen Xeon Phi
     accelerator boards.  Based on an online search for information on
@@ -23,5 +35,26 @@
     you computed this, and give URLs for where you got the parameters
     in your calculation.  (We will return to this question again after
     we cover some computer architecture.)
+
+    8 Intel Xeon E5-2620 v3:
+        (4 flops/cycle) * (2.4 * 10^9 cycles/core) * (12 cores/node) *
+        (8 nodes) = 921.6 gigaflop/s
+
+    15 Xeon Phi 5110P:
+        (4 flops/cycle) * (1.053 * 10^9 cycles/core) * (60 cores/node) *
+        (15 nodes) = 3.7908 teraflop/s
+
+    for a total of 4.7124 teraflop/s.
+
+    Resources used:
+     - http://en.community.dell.com/techcenter/high-performance-computing/w/wiki/2329
+     - http://ark.intel.com/products/83352/Intel-Xeon-Processor-E5-2620-v3-15M-Cache-2_40-GHz
+     - http://ark.intel.com/products/71992/Intel-Xeon-Phi-Coprocessor-5110P-8GB-1_053-GHz-60-core
     
 5.  What is the approximate theoretical peak flop rate for your own machine?
+
+    1.3 GHz Intel Core i5:
+        (4 flops/cycle) * (1.3 * 10^9 cycles/core) * (2 cores) = 10.4 gigaflop/s
+
+    Resources used:
+    - http://www.intel.com/content/www/us/en/processors/core/core-i5-processor.html
