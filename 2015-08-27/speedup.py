@@ -17,5 +17,3 @@ plt.ylabel('Upper bound on speedup')
 plt.xlim(0, 128)
 plt.plot(p, amdahls(p, .1), 'bo')
 plt.show()
-
-print(amdahls(128, .1))

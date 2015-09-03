@@ -11,12 +11,38 @@ with questions for class!
     you computed this, and give URLs for where you got the parameters
     in your calculation.  (We will return to this question again after
     we cover some computer architecture.)
+
+    See solution for 2015-08-27.
     
 2.  What is the approximate theoretical peak flop rate for your own machine?
+
+    See solution for 2015-08-27.
 
 3.  Suppose there are t tasks that can be executed in a pipeline
     with p stages.  What is the speedup over serial execution of the
     same tasks?
+
+    Suppose it takes time k to complete a stage. 
+
+    Serial case: total time = tpk
+
+    In the parallel case, we wait pk for the first task, and then (t-1)k
+    for the rest, for a total time of pk + (t-1)k = (t+p-1)k.
+
+    Speedup = tpk / (t+p-1)k = tp / (t+p-1)
+    1 / Speedup = (t+p-1) / tp = (1 + p/t - 1/t) / p
+
+    As t tends to infinity:
+
+    1 / Speedup = 1 / p --> Speedup = p
+
+    Diagram:
+
+    123
+     123
+      123
+       123
+        123
 
 4.  Consider the following list of tasks (assume they can't be pipelined):
 
@@ -30,6 +56,9 @@ with questions for class!
     What is the minimum serial time between starting to compile and having
     a compiled application?  What is the minimum parallel time given
     an arbitrary number of processors?
+
+    Serial time: 1 + .5 + .25 + .5 + .5 = 2.75s
+    Parallel time: 1 + .25 + .5 + .5 = 2.25s
 
 5.  Clone the membench repository from GitHub:
 
