@@ -22,17 +22,19 @@ something into an already-full cache.
 the memory-based AI of this code? (Hint: What is the memory-based AI of just the
 innermost loop?)
 
-Computing C[i,j] requires 2N flops, which uses a total of 16N bytes of memory,
+Let us consider an FMA as 2 flops.
+
+Computing C[i,j] requires 2N floats, which uses a total of 16N bytes of memory,
 since each double-precision float is 8 bytes. Since 16N is much larger than our
 L3 cache, we have to transfer the data from memory into the cache on every read,
-so AI = 1 flop / 16 bytes.
+so AI = 2 flops / 16 bytes = 1 flop / 8 bytes.
 
 2. Now suppose that the cache is substantially larger than 16N, but
 substantially smaller than 8N^2. What is the AI now?
 
 Now we can cache the rows of A, but we don't have enough space in the cache to
 cache the columns of B, so we do one memory transfer per flop, and AI = 1 flop /
-8 bytes.
+4 bytes.
 
 3. Now suppose the cache is large enough to hold all of A, B, and C. What is the
 AI now? (Hint: Writing to a byte of memory not already in the cache incurs two
@@ -40,17 +42,19 @@ memory transfers: one to move the data to the cache for writing, and one to move
 the written data back to main memory.)
 
 Our algorithm performs N^3 operations and we can store all 16N^2 bytes of A and
-B. In addition, writing to C takes 2 * 8N^2 bytes as well, so AI = N^3 / 32N^2
-= N / 32.
+B. In addition, writing to C takes 2 * 8N^2 bytes as well, so AI = 2N^3 / 32N^2
+= N / 16.
 
 4. Cache overflowing. On my CPU (Intel i7-4700 HQ), L1, L2, and L3 caches are 32
 KB, 256 KB, and 6 MB respectively. What is the largest problem size N that will
 fit in each cache? What is the arithmetic intensity associated with each problem
 size?
 
+Let us assume we want to fit everything into cache.
+
 L1: N = sqrt(2^15 / 32) = 32, AI = 32 / 32 = 1
 L2: N = sqrt(2^18 / 32) = 90.5 > 90, AI = 90 / 32 = 2.8
-L2: N = sqrt(6 * 2^20 / 32) = 443.4 > 443, AI = 443 / 32 = 13.8
+L3: N = sqrt(6 * 2^20 / 32) = 443.4 > 443, AI = 443 / 32 = 13.8
 
 5. My CPU has 4 cores, each of which can do 8 fused multiply-adds per cycle, has
 a clock rate of 2.4 GHz, and a memory bandwidth of 25.6 GB/s. At what arithmetic
