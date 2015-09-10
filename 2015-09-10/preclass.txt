@@ -3,12 +3,58 @@
    host cores are used, for the moment).  How do things change with
    the addition of the two Phi boards?
 
+   Totient node stats:
+   (16 flops/cycle) * (2.4 * 10^9 cycles/core) * (12 cores/node) = 460.8 GFlop/s
+   59 GB/s memory bandwidth
+
+   Attainable GFlop/s = min(peak floating-point performance, peak memory
+   bandwidth * operational intensity)
+
+   OI = .25 --> Attainable GFlop/s = 59 * .25 = 14.8
+   Reaches peak at OI = 460.8 / 59 = 7.8
+
+   Pardon the ASCII art depiction. The x-axis is the operational intensity, and
+   the y-axis is the attainable GFlop/s:
+
+         |      
+   460.8 |         _________
+         |       /
+     ... |     /
+         |   /
+    14.8 | /
+         |____________________
+          .25 ... 7.8
+
+   Xeon Phi 5110P stats (from Wikipedia):
+   1.01 TFlop/s, 320 GB/s memory bandwidth
+
+   OI = .25 --> Attainable GFlop/s = 80
+   Reaches peak at OI = 3.2
+
+         |      
+    1010 |         _________
+         |       /
+     ... |     /
+         |   /
+      80 | /
+         |____________________
+          .25 ... 3.2
+
+   I'm not quite sure of how to combine the numbers to create the roofline for the
+   totient node with two boards, however.
+
 2. What is the difference between two cores and one core with
    hyperthreading?
+
+   Hyperthreading only affects the fraction of peak performance accessible for one
+   core, while two cores can actually be ran in parallel.
 
 3. Do a Google search to find a picture of how memories are arranged
    on the Phi architecture.  Describe the setup briefly in your own
    words.  Is the memory access uniform or non-uniform?
+
+   I did a search but since my background with computer hardware isn't as strong
+   as I'd like, I'm not sure what I'm looking at, to be quite honest. ):
 
 4. Consider the parallel dot product implementations suggested in the
    slides.  As a function of the number of processors, the size of the
@@ -17,3 +63,12 @@
    [Note that dot products have low arithmetic intensity -- the
     roofline model may be useful for reasoning about the peak
     performance for computing pieces of the dot product]
+
+    Let p = number of processors, n = size of vectors, and t = time to send
+    message.
+
+    Serial = n
+
+    Parallel = n / p + t * p + n
+
+    Speedup = (n/p + t*p + n) / n = 1/p + t*p/n + 1
