@@ -20,10 +20,10 @@ Game of Life slides (e.g. vectorized kernel).
     board that does not fit?
 
 The basic implementation keeps track of 2 boards, each with (n+2)^2
-elements. Each element of a board is a 4-byte char, and the size of the
+elements. Each element of a board is a 1-byte char, and the size of the
 L3 cache for the totient nodes should be 15 MB. Solving for n,
 
-2 * 4 * (n+2)^2 = 15 MB --> n = 1400
+2 * 1 * (n+2)^2 = 15 MB --> n = 2802
 
 3.  Assuming that we want to advance time by several generations,
     suggest a blocking strategy that would improve the operational
