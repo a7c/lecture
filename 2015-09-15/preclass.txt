@@ -5,14 +5,25 @@ the glider pattern for a few generations.
 
 0.  How much time did you spend on this pre-class exercise, and when?
 
+I spent about an hour before class, starting at approximately 7am.
+
 1.  What are one or two points that you found least clear in the
     9/15 slide decks (including the narration)?
+
+I was a little confused with some of the terms used in the last of the
+Game of Life slides (e.g. vectorized kernel).
 
 2.  In the basic implementation provided, what size board for the Game
     of Life would fit in L3 cache for one of the totient nodes?  Add a
     timer to the code and run on the totient node.  How many cells per
     second can we update for a board that fits in L3 cache?  For a
     board that does not fit?
+
+The basic implementation keeps track of 2 boards, each with (n+2)^2
+elements. Each element of a board is a 4-byte char, and the size of the
+L3 cache for the totient nodes should be 15 MB. Solving for n,
+
+2 * 4 * (n+2)^2 = 15 MB --> n = 1400
 
 3.  Assuming that we want to advance time by several generations,
     suggest a blocking strategy that would improve the operational
@@ -21,10 +32,21 @@ the glider pattern for a few generations.
     want to try your hand at implementing your strategy (though you
     need not spend too much time on it).
 
+We could try domain synchronization: dividethe board into 4 quadrants, 
+with a single core processing each quadrant, and set up synchronization 
+barriers so that the quadrants communicate the changes to each other 
+every generation.
+
 4.  Comment on what would be required to parallelize this code
     according to the domain decomposition strategy outlined in the
     slides.  Do you think you would see good speedups on one of
     the totient nodes?  Why or why not?
+
+I think it would depend on the input size. For small input sizes, the
+"surface area to volume ratio" would be high, so there would be a lot
+of communication overhead. For much larger input sizes, however, the cost 
+of communication would be amortized over the rest of the computations,
+so I'd expect to see good speedups in this case.
 
 5.  Suppose we want to compute long-range interactions between two
     sets of particles in parallel using the obvious n^2 algorithm in a
@@ -49,3 +71,9 @@ the glider pattern for a few generations.
     Based on what you know about memories and parallel architecture,
     do you see any features of this approach that are likely to lead
     to poor performance?
+
+For a processor p to apply forces to its particles, it needs to iterate 
+over all the particles. If all the particles don't fit in cache, I feel like 
+this would require fetching the data over and over (kind of like the issue
+we had with the naive matmul). Perhaps blocking or domain decomposition
+would be a better strategy?
