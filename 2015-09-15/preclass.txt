@@ -32,10 +32,17 @@ L3 cache for the totient nodes should be 15 MB. Solving for n,
     want to try your hand at implementing your strategy (though you
     need not spend too much time on it).
 
-We could try domain synchronization: dividethe board into 4 quadrants, 
+We could try domain synchronization: divide the board into 4 quadrants, 
 with a single core processing each quadrant, and set up synchronization 
 barriers so that the quadrants communicate the changes to each other 
-every generation.
+every generation. In fact, we can advance multiple generations in a 
+processor's domain before synchronizing for even better performance.
+
+Even if we don't parallelize, dividing the board in to blocks (maybe
+even recursively to take advantage of cache sizes) should still result 
+in better performance, since it's good for memory locality. We'd need 
+to overlap the edges of the blocks though to compute the next generation 
+of the block edges.
 
 4.  Comment on what would be required to parallelize this code
     according to the domain decomposition strategy outlined in the
