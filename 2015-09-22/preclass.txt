@@ -1,7 +1,16 @@
 0.  How much time did you spend on this pre-class exercise, and when?
 
+    About an hour, starting from 9/22 at 6am.
+
 1.  What are one or two points that you found least clear in the
     9/22 slide decks (including the narration)?
+
+    I don't quite understand what the advantages are to using the
+    other types of parallel work divisions (master, sections). When
+    are these most useful?
+
+    I also had some trouble following along with the Monte Carlo
+    example.
 
 2.  The pthread_mc.c file in the demo subdirectory runs a Monte Carlo
     simulation to estimate the expected value of a uniform random
@@ -13,14 +22,44 @@
        time per trial (t_trial), and time to update the global
        counters in the critical section (t_update).
 
+       Let b = number of trials between synchronizations
+
+       time = parallel work + serial work
+            = (N / p * t_trial) + (N / b * t_update)
+
     b) Run the code with a few different parameter values in order
        to estimate N, t_trial, and t_update for this code on
        a totient compute node.
+
+       (Sorry, I think I ran these on the head node on accident)
+
+       -p 5 -b 1: 5 threads (pthreads): 0.500003 (0.000288717): 3.786830e-01 s, 1000003 trials
+       -p 5 -b 10: 5 threads (pthreads): 0.499778 (0.000288761): 3.981200e-02 s, 1000050 trials
+       -p 5 -b 100: 5 threads (pthreads): 0.499988 (0.00028872): 1.763900e-02 s, 1000500 trials
+       -p 5 -b 1000: 5 threads (pthreads): 0.499943 (0.000287979): 1.698600e-02 s, 1005000 trials
+       -p 5 -b 10000: 5 threads (pthreads): 0.499993 (0.000281793): 1.831000e-02 s, 1050000 trials
+
+       -p 32 -b 1: 32 threads (pthreads): 0.499673 (0.000288614): 4.330770e-01 s, 1000030 trials
+       -p 32 -b 10: 32 threads (pthreads): 0.499917 (0.000288526): 4.882600e-02 s, 1000320 trials
+       -p 32 -b 100: 32 threads (pthreads): 0.499807 (0.000288032): 1.947500e-02 s, 1003200 trials
+       -p 32 -b 1000: 32 threads (pthreads): 0.499992 (0.000284082): 1.900100e-02 s, 1032000 trials
+       -p 32 -b 10000: 32 threads (pthreads): 0.500114 (0.000251176): 1.000100e-02 s, 1320000 trials
+       -p 32 -b 100000: 32 threads (pthreads): 0.499968 (0.000140881): 3.093000e-02 s, 4200000 trials
+
+       Solving for
+       .016986 = (1005000 / 5 * t_trial) + (1005000 / 1000 * t_update)
+       .433077 = (1000030 / 32 * t_trial) + (1000030 / 1 * t_update)
+       we get t_trial = 8.2355e-08 s, t_update = 4.3049e-07 s
+
 
     c) Based on your model, suggest a strategy for choosing the batch
        size.  How might you generalize this strategy to automatically
        choose batch sizes for different types of computational
        experiments?
+
+       It seems that, up to a certain point, increasing the batch size improves performance, with the
+       ideal size increasing based on the number of processors. Perhaps we could formulate an equation
+       for the ideal batch size, depending on p?
     
 3.  In the workq subdirectory of this directory, there is a basic work
     queue implementation.  Following the strategy outlined in the
