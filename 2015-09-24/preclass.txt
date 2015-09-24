@@ -1,7 +1,12 @@
 0.  How much time did you spend on this pre-class exercise, and when?
 
+    45 minutes on 9/24 at 7am
+
 1.  What are one or two points that you found least clear in the
     9/24 slide decks (including the narration)?
+
+    I felt like the slide deck for 9/24 was pretty clear overall, though
+    some of the stuff in the common mistakes paper went over my head.
 
 2.  The omp_mc.c file in the demo subdirectory runs a Monte Carlo
     simulation to estimate the expected value of a uniform random
@@ -13,16 +18,90 @@
        time per trial (t_trial), and time to update the global
        counters in the critical section (t_update).
 
+       Let b = number of trials between synchronizations
+
+       time = parallel work + serial work
+            = (N / p * t_trial) + (N / b * t_update)
+
     b) Run the code with a few different parameter values in order
        to estimate N, t_trial, and t_update for this code on
        a totient compute node.
+
+      Here are the results (slighly abbreviated):
+
+      maxtrials: 10000000
+      nbatch:    1
+      0.499948 (9.13075e-05) from 10000023 trials
+      24 threads (OpenMP): 4.027514e+00 s
+
+      maxtrials: 10000000
+      nbatch:    10
+      0.499963 (9.13051e-05) from 10000240 trials
+      24 threads (OpenMP): 7.411768e-01 s
+
+      maxtrials: 10000000
+      nbatch:    100
+      0.499977 (9.1295e-05) from 10002400 trials
+      24 threads (OpenMP): 3.573561e-01 s
+
+      maxtrials: 10000000
+      nbatch:    1000
+      0.499934 (9.11974e-05) from 10024000 trials
+      24 threads (OpenMP): 5.262899e-02 s
+
+      maxtrials: 10000000
+      nbatch:    10000
+      0.499963 (9.02321e-05) from 10240000 trials
+      24 threads (OpenMP): 2.300501e-02 s
+
+      maxtrials: 10000000
+      nbatch:    1
+      0.499955 (9.13103e-05) from 10000023 trials
+      24 threads (OpenMP): 3.780031e+00 s
+
+      maxtrials: 10000000
+      nbatch:    10
+      0.499984 (9.13045e-05) from 10000240 trials
+      24 threads (OpenMP): 7.243478e-01 s
+
+      maxtrials: 10000000
+      nbatch:    100
+      0.500003 (9.12848e-05) from 10002400 trials
+      24 threads (OpenMP): 3.366292e-01 s
+
+      maxtrials: 10000000
+      nbatch:    1000
+      0.49997 (9.11998e-05) from 10024000 trials
+      24 threads (OpenMP): 3.464603e-02 s
+
+      maxtrials: 10000000
+      nbatch:    10000
+      0.499924 (9.01974e-05) from 10240000 trials
+      24 threads (OpenMP): 1.212831e-01 s
+
+      maxtrials: 10000000
+      nbatch:    100000
+      0.500031 (8.19907e-05) from 12400000 trials
+      24 threads (OpenMP): 6.449103e-02 s
+
+      Solving for
+       4.02751 = (10000023 / 24 * t_trial) + (10000023 / 1 * t_update)
+       .023005 = (10240000 / 24 * t_trial) + (10240000 / 10000 * t_update)
+       we get t_trial = 5.296e-08 s, t_update = 4.005e-07 s
 
     c) Based on your model, suggest a strategy for choosing the batch
        size.  How might you generalize this strategy to automatically
        choose batch sizes for different types of computational
        experiments?
 
+       See answer from preclass 9/22--my suggestion is the same.
+
 3.  The "OpenMP pitfalls" paper describes some common pitfalls (both
     performance and correctness) in OpenMP codes.  Go through the
     checklist in the paper for omp_mc.c.  What performance mistakes
     are there in the demonstration implementation?
+
+    It seems like we can use atomic instead of critical in certain parts of
+    the code where we're just updating flags. In addition, I wonder if there's
+    code/computations that we could do outside the critical section to reduce
+    the work done in the critical region.
